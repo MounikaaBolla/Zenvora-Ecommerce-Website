@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Zenvora - Payment</title>
+
+    <style>
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f5ef;
+            color: #123f3f;
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================= */
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        .navbar {
+            min-height: 72px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 55px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 3px 14px rgba(0, 0, 0, 0.14);
+        }
+
+        .logo {
+            color: white;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #d9a400;
+        }
+
+        .orders-btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            background: #d9a400;
+
+            color: white;
+
+            padding: 11px 18px;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .orders-btn:hover {
+            background: #b88900;
+
+            transform: translateY(-1px);
+        }
+
+        .orders-btn:focus-visible {
+            outline: 3px solid rgba(255, 255, 255, 0.65);
+
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           PAYMENT SECTION
+        ========================================================= */
+
+        .payment-section {
+            flex: 1;
+
+            padding: 45px 20px 30px;
+        }
+
+        .payment-container {
+            max-width: 700px;
+
+            margin: 0 auto;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 15px;
+
+            border: 1px solid #ebe8df;
+
+            box-shadow:
+                0 6px 22px rgba(15, 76, 76, 0.10);
+        }
+
+        /* =========================================================
+           TITLE
+        ========================================================= */
+
+        .title {
+            text-align: center;
+
+            color: #0f4c4c;
+
+            font-size: 35px;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #777;
+
+            font-size: 14px;
+
+            margin-bottom: 30px;
+        }
+
+        /* =========================================================
+           PAYMENT STEPS
+        ========================================================= */
+
+        .payment-steps {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 9px;
+
+            margin-bottom: 30px;
+        }
+
+        .step {
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: #777;
+
+            font-size: 12px;
+
+            font-weight: bold;
+        }
+
+        .step-number {
+            width: 27px;
+
+            height: 27px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #e5e2d9;
+
+            color: #777;
+
+            font-size: 11px;
+        }
+
+        .step.active {
+            color: #0f4c4c;
+        }
+
+        .step.active .step-number {
+            background: #d9a400;
+
+            color: white;
+        }
+
+        .step-line {
+            width: 40px;
+
+            height: 1px;
+
+            background: #d7d3c8;
+        }
+
+        /* =========================================================
+           ORDER INFORMATION
+        ========================================================= */
+
+        .order-info {
+            background: #fff9e9;
+
+            border: 1px solid #eadcae;
+
+            border-left: 5px solid #d9a400;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin-bottom: 30px;
+        }
+
+        .order-info-title {
+            color: #0f4c4c;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            margin-bottom: 13px;
+        }
+
+        .order-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 7px 0;
+        }
+
+        .order-label {
+            color: #666;
+
+            font-size: 14px;
+        }
+
+        .order-id {
+            color: #0f4c4c;
+
+            font-size: 15px;
+
+            font-weight: bold;
+        }
+
+        .order-total {
+            color: #d9a400;
+
+            font-size: 25px;
+
+            font-weight: bold;
+        }
+
+        /* =========================================================
+           PAYMENT METHODS
+        ========================================================= */
+
+        .payment-title {
+            color: #0f4c4c;
+
+            font-size: 21px;
+
+            margin-bottom: 16px;
+        }
+
+        .payment-subtitle {
+            color: #777;
+
+            font-size: 13px;
+
+            margin-bottom: 17px;
+        }
+
+        .payment-option {
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+
+            border: 2px solid #e4e1d8;
+
+            background: white;
+
+            padding: 16px;
+
+            margin-bottom: 12px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .payment-option:hover {
+            border-color: #d9a400;
+
+            background: #fffaf0;
+
+            transform: translateY(-1px);
+        }
+
+        .payment-option:has(input:checked) {
+            border-color: #d9a400;
+
+            background: #fffaf0;
+
+            box-shadow:
+                0 3px 10px rgba(217, 164, 0, 0.10);
+        }
+
+        .payment-option input {
+            width: 18px;
+
+            height: 18px;
+
+            flex-shrink: 0;
+
+            accent-color: #d9a400;
+
+            cursor: pointer;
+        }
+
+        .payment-content {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 3px;
+        }
+
+        .payment-name {
+            color: #123f3f;
+
+            font-size: 15px;
+
+            font-weight: bold;
+        }
+
+        .payment-description {
+            color: #888;
+
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           PAYMENT BUTTON
+        ========================================================= */
+
+        .pay-btn {
+            width: 100%;
+
+            border: none;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            padding: 16px;
+
+            border-radius: 9px;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin-top: 18px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .pay-btn:hover {
+            background: #0b3838;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 6px 15px rgba(15, 76, 76, 0.20);
+        }
+
+        .pay-btn:active {
+            transform: translateY(0);
+        }
+
+        .pay-btn:focus-visible {
+            outline: 3px solid rgba(217, 164, 0, 0.45);
+
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           SECURITY INFORMATION
+        ========================================================= */
+
+        .security {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            margin-top: 17px;
+
+            color: #777;
+
+            font-size: 12px;
+
+            text-align: center;
+        }
+
+        .security-icon {
+            font-size: 15px;
+        }
+
+        /* =========================================================
+           PAYMENT NOTE
+        ========================================================= */
+
+        .payment-note {
+            background: #f7f5ef;
+
+            border: 1px solid #e8e4da;
+
+            border-radius: 9px;
+
+            padding: 13px;
+
+            margin-top: 20px;
+
+            color: #777;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+            text-align: center;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+            margin-top: 25px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 32px 20px;
+        }
+
+        footer p {
+            margin: 7px;
+
+            font-size: 14px;
+        }
+
+        footer strong {
+            color: #d9a400;
+        }
+
+        /* =========================================================
+           TABLET
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 0 22px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .orders-btn {
+                padding: 10px 13px;
+
+                font-size: 13px;
+            }
+
+            .payment-section {
+                padding: 35px 16px 25px;
+            }
+
+            .payment-container {
+                padding: 28px 22px;
+            }
+
+            .title {
+                font-size: 30px;
+            }
+
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 520px) {
+
+            .navbar {
+                min-height: 68px;
+
+                padding: 11px 15px;
+
+                gap: 10px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .orders-btn {
+                padding: 9px 10px;
+
+                font-size: 12px;
+            }
+
+            .payment-section {
+                padding: 28px 13px 20px;
+            }
+
+            .payment-container {
+                padding: 22px 17px;
+
+                border-radius: 12px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+
+                margin-bottom: 23px;
+            }
+
+            .payment-steps {
+                gap: 5px;
+
+                margin-bottom: 24px;
+            }
+
+            .step {
+                font-size: 9px;
+
+                gap: 4px;
+            }
+
+            .step-number {
+                width: 23px;
+
+                height: 23px;
+
+                font-size: 9px;
+            }
+
+            .step-line {
+                width: 20px;
+            }
+
+            .order-info {
+                padding: 16px;
+
+                margin-bottom: 25px;
+            }
+
+            .order-row {
+                align-items: flex-start;
+            }
+
+            .order-label {
+                font-size: 13px;
+            }
+
+            .order-id {
+                font-size: 14px;
+            }
+
+            .order-total {
+                font-size: 22px;
+            }
+
+            .payment-title {
+                font-size: 19px;
+            }
+
+            .payment-option {
+                padding: 14px;
+
+                gap: 10px;
+            }
+
+            .payment-name {
+                font-size: 14px;
+            }
+
+            .payment-description {
+                font-size: 11px;
+            }
+
+            .pay-btn {
+                padding: 14px;
+
+                font-size: 16px;
+            }
+
+            footer {
+                padding: 28px 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav
+    class="navbar"
+    aria-label="Payment navigation">
+
+
+    <div class="logo">
+
+        🛒 Zen<span>vora</span>
+
+    </div>
+
+
+    <a
+        href="/orders"
+        class="orders-btn"
+        title="View your orders">
+
+        📦 My Orders
+
+    </a>
+
+
+</nav>
+
+
+
+<!-- =========================================================
+     PAYMENT SECTION
+========================================================= -->
+
+<section class="payment-section">
+
+
+    <div class="payment-container">
+
+
+        <!-- =================================================
+             TITLE
+        ================================================== -->
+
+        <h1 class="title">
+
+            💳 Payment
+
+        </h1>
+
+
+        <p class="subtitle">
+
+            Choose your preferred payment method to complete your order.
+
+        </p>
+
+
+
+        <!-- =================================================
+             PAYMENT PROGRESS
+        ================================================== -->
+
+        <div
+            class="payment-steps"
+            aria-label="Payment progress">
+
+
+            <div class="step active">
+
+                <span class="step-number">
+
+                    1
+
+                </span>
+
+                <span>
+
+                    Order
+
+                </span>
+
+            </div>
+
+
+            <span
+                class="step-line"
+                aria-hidden="true">
+            </span>
+
+
+            <div class="step active">
+
+                <span class="step-number">
+
+                    2
+
+                </span>
+
+                <span>
+
+                    Payment
+
+                </span>
+
+            </div>
+
+
+            <span
+                class="step-line"
+                aria-hidden="true">
+            </span>
+
+
+            <div class="step">
+
+                <span class="step-number">
+
+                    3
+
+                </span>
+
+                <span>
+
+                    Complete
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             ORDER INFORMATION
+        ================================================== -->
+
+        <div class="order-info">
+
+
+            <div class="order-info-title">
+
+                🧾 Order Information
+
+            </div>
+
+
+            <div class="order-row">
+
+
+                <span class="order-label">
+
+                    Order ID
+
+                </span>
+
+
+                <span
+                    class="order-id"
+                    th:text="${orderId}">
+
+                    1
+
+                </span>
+
+
+            </div>
+
+
+            <div class="order-row">
+
+
+                <span class="order-label">
+
+                    Total Amount
+
+                </span>
+
+
+                <span class="order-total">
+
+                    ₹<span th:text="${totalAmount}">
+
+                        0
+
+                    </span>
+
+                </span>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             PAYMENT FORM
+        ================================================== -->
+
+        <form
+            action="/payment/process"
+            method="post">
+
+
+            <!-- ORDER ID -->
+
+            <input
+                type="hidden"
+                name="orderId"
+                th:value="${orderId}">
+
+
+
+            <!-- =================================================
+                 PAYMENT METHOD TITLE
+            ================================================== -->
+
+            <h2 class="payment-title">
+
+                Select Payment Method
+
+            </h2>
+
+
+            <p class="payment-subtitle">
+
+                Select one option below.
+
+            </p>
+
+
+
+            <!-- =================================================
+                 CASH ON DELIVERY
+            ================================================== -->
+
+            <label
+                class="payment-option"
+                for="cashPayment">
+
+
+                <input
+                    type="radio"
+                    id="cashPayment"
+                    name="paymentMethod"
+                    value="Cash on Delivery"
+                    required>
+
+
+                <span class="payment-content">
+
+
+                    <span class="payment-name">
+
+                        🏠 Cash on Delivery
+
+                    </span>
+
+
+                    <span class="payment-description">
+
+                        Pay when your order is delivered.
+
+                    </span>
+
+
+                </span>
+
+
+            </label>
+
+
+
+            <!-- =================================================
+                 UPI
+            ================================================== -->
+
+            <label
+                class="payment-option"
+                for="upiPayment">
+
+
+                <input
+                    type="radio"
+                    id="upiPayment"
+                    name="paymentMethod"
+                    value="UPI">
+
+
+                <span class="payment-content">
+
+
+                    <span class="payment-name">
+
+                        📱 UPI
+
+                    </span>
+
+
+                    <span class="payment-description">
+
+                        Pay using your preferred UPI application.
+
+                    </span>
+
+
+                </span>
+
+
+            </label>
+
+
+
+            <!-- =================================================
+                 CARD
+            ================================================== -->
+
+            <label
+                class="payment-option"
+                for="cardPayment">
+
+
+                <input
+                    type="radio"
+                    id="cardPayment"
+                    name="paymentMethod"
+                    value="Card">
+
+
+                <span class="payment-content">
+
+
+                    <span class="payment-name">
+
+                        💳 Debit / Credit Card
+
+                    </span>
+
+
+                    <span class="payment-description">
+
+                        Pay securely using your bank card.
+
+                    </span>
+
+
+                </span>
+
+
+            </label>
+
+
+
+            <!-- =================================================
+                 PAY BUTTON
+            ================================================== -->
+
+            <button
+                type="submit"
+                class="pay-btn"
+                title="Pay and confirm your order">
+
+                ✓ Pay &amp; Confirm Order
+
+            </button>
+
+
+            <!-- =================================================
+                 SECURITY
+            ================================================== -->
+
+            <div class="security">
+
+                <span
+                    class="security-icon"
+                    aria-hidden="true">
+
+                    🔒
+
+                </span>
+
+
+                <span>
+
+                    Your payment information is securely processed.
+
+                </span>
+
+            </div>
+
+
+        </form>
+
+
+
+        <!-- =================================================
+             PAYMENT NOTE
+        ================================================== -->
+
+        <div class="payment-note">
+
+            💡 For this project, UPI and Card are represented as
+            payment-method selections. Actual payment-gateway
+            integration can be added separately.
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+
+    <p>
+
+        © 2026 Zenvora — E-Commerce Management System
+
+    </p>
+
+
+    <p>
+
+        Created by
+
+        <strong>
+
+            Ms. Mounika Bolla
+
+        </strong>
+
+    </p>
+
+
+</footer>
+
+
+</body>
+
+</html>

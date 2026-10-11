@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zenvora - Login</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f7f5ef;
+            color: #123f3f;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            min-height: 70px;
+
+            background: #0f4c4c;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 60px;
+
+            box-shadow:
+                0 3px 14px rgba(15, 76, 76, 0.15);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #d9a400;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+
+            background: #d9a400;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #b88900;
+
+            transform: translateY(-1px);
+        }
+
+        /* ================= LOGIN ================= */
+
+        .login-section {
+            flex: 1;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 55px 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+
+            background: white;
+
+            padding: 42px;
+
+            border-radius: 16px;
+
+            border: 1px solid #ece9df;
+
+            box-shadow:
+                0 10px 30px rgba(15, 76, 76, 0.12);
+        }
+
+        .login-icon {
+            width: 68px;
+            height: 68px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            background: #0f4c4c;
+
+            color: #d9a400;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 30px;
+
+            box-shadow:
+                0 5px 15px rgba(15, 76, 76, 0.15);
+        }
+
+        .login-title {
+            text-align: center;
+
+            font-size: 32px;
+
+            color: #0f4c4c;
+
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+
+            color: #777;
+
+            margin-bottom: 30px;
+
+            line-height: 1.5;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            color: #123f3f;
+        }
+
+        .form-group input {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border: 1px solid #d6d3c8;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            background: #fff;
+
+            color: #123f3f;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .form-group input:focus {
+            border-color: #d9a400;
+
+            box-shadow:
+                0 0 0 3px rgba(217, 164, 0, 0.13);
+        }
+
+        /* ================= LOGIN BUTTON ================= */
+
+        .login-btn {
+            width: 100%;
+
+            border: none;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            padding: 14px;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .login-btn:hover {
+            background: #0b3838;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 5px 14px rgba(15, 76, 76, 0.20);
+        }
+
+        .login-btn:focus-visible {
+            outline: 3px solid rgba(217, 164, 0, 0.4);
+            outline-offset: 2px;
+        }
+
+        /* ================= REGISTER LINK ================= */
+
+        .register-link {
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: #777;
+        }
+
+        .register-link a {
+            color: #b88900;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            color: #8f6900;
+            text-decoration: underline;
+        }
+
+        /* ================= ERROR ================= */
+
+        .error {
+            background: #fdeaea;
+
+            color: #b83232;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+
+            border: 1px solid #f4caca;
+        }
+
+        /* ================= SUCCESS ================= */
+
+        .success {
+            background: #e9f5ee;
+
+            color: #167a45;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+
+            border: 1px solid #cce8d7;
+        }
+
+        /* ================= SECURITY NOTE ================= */
+
+        .security-note {
+            margin-top: 22px;
+
+            padding-top: 18px;
+
+            border-top: 1px solid #ece9df;
+
+            text-align: center;
+
+            color: #888;
+
+            font-size: 12px;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: #0f4c4c;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 28px 20px;
+        }
+
+        footer p {
+            margin: 6px;
+        }
+
+        footer strong {
+            color: #d9a400;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .back-btn {
+                padding: 9px 13px;
+                font-size: 13px;
+            }
+
+            .login-section {
+                padding: 35px 15px;
+            }
+
+            .login-card {
+                padding: 32px 22px;
+            }
+
+            .login-title {
+                font-size: 28px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🛒 Zen<span>vora</span>
+        </div>
+
+        <a href="/products"
+           class="back-btn">
+            ← Back to Shop
+        </a>
+
+    </nav>
+
+
+    <!-- ================= LOGIN SECTION ================= -->
+
+    <section class="login-section">
+
+        <div class="login-card">
+
+            <div class="login-icon"
+                 aria-hidden="true">
+                🔐
+            </div>
+
+            <h1 class="login-title">
+                Welcome Back
+            </h1>
+
+            <p class="login-subtitle">
+                Login to your Zenvora account
+            </p>
+
+
+            <!-- ================= ERROR MESSAGE ================= -->
+
+            <div class="error"
+                 th:if="${error}"
+                 th:text="${error}">
+            </div>
+
+
+            <!-- ================= SUCCESS MESSAGE ================= -->
+
+            <div class="success"
+                 th:if="${success}"
+                 th:text="${success}">
+            </div>
+
+
+            <!-- ================= LOGIN FORM ================= -->
+
+            <form action="/login"
+                  method="post">
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="login-btn">
+
+                    Login
+
+                </button>
+
+            </form>
+
+
+            <div class="register-link">
+
+                Don't have an account?
+
+                <a href="/register">
+                    Create Account
+                </a>
+
+            </div>
+
+
+            <div class="security-note">
+                🔒 Your account information is handled securely.
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <p>
+            © 2026 Zenvora — E-Commerce Management System
+        </p>
+
+        <p>
+            Created by
+            <strong>Ms. Mounika Bolla</strong>
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

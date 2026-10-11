@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Zenvora - Products</title>
+
+    <style>
+
+        /* =========================================================
+           GLOBAL
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f5ef;
+            color: #123f3f;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================= */
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        .navbar {
+            min-height: 72px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 55px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 3px 14px rgba(0, 0, 0, 0.14);
+        }
+
+        .logo {
+            color: white;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            letter-spacing: 0.2px;
+
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #d9a400;
+        }
+
+        .nav-links {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            color: white;
+
+            background: #d9a400;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: #b88900;
+
+            transform: translateY(-1px);
+        }
+
+        .logout-btn {
+            background: #b83232;
+        }
+
+        .logout-btn:hover {
+            background: #922727;
+        }
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .hero {
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f4c4c,
+                    #123f3f
+                );
+
+            color: white;
+
+            text-align: center;
+
+            padding: 58px 20px 62px;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 240px;
+
+            height: 240px;
+
+            border-radius: 50%;
+
+            border: 1px solid rgba(217, 164, 0, 0.18);
+
+            top: -120px;
+
+            left: -80px;
+        }
+
+        .hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 280px;
+
+            height: 280px;
+
+            border-radius: 50%;
+
+            border: 1px solid rgba(217, 164, 0, 0.15);
+
+            bottom: -170px;
+
+            right: -90px;
+        }
+
+        .hero-content {
+            position: relative;
+
+            z-index: 2;
+
+            max-width: 850px;
+
+            margin: auto;
+        }
+
+        .hero h1 {
+            font-size: 40px;
+
+            margin-bottom: 13px;
+
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: #d9a400;
+        }
+
+        .hero p {
+            color: #e5e7eb;
+
+            font-size: 17px;
+
+            line-height: 1.6;
+        }
+
+        /* =========================================================
+           PRODUCTS SECTION
+        ========================================================= */
+
+        .products-section {
+            max-width: 1280px;
+
+            margin: auto;
+
+            padding: 42px 25px 20px;
+        }
+
+        /* =========================================================
+           SEARCH PANEL
+        ========================================================= */
+
+        .search-panel {
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 22px;
+
+            margin-bottom: 35px;
+
+            box-shadow:
+                0 5px 18px rgba(15, 76, 76, 0.09);
+
+            border: 1px solid #ece9df;
+        }
+
+        .search-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 12px;
+        }
+
+        .search-heading {
+            color: #0f4c4c;
+
+            font-size: 17px;
+
+            font-weight: bold;
+        }
+
+        .product-count {
+            color: #777;
+
+            font-size: 14px;
+        }
+
+        .search-container {
+            position: relative;
+
+            width: 100%;
+        }
+
+        .search-box {
+            width: 100%;
+
+            padding: 15px 95px 15px 48px;
+
+            border: 1px solid #d6d3c8;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            outline: none;
+
+            background: #fff;
+
+            color: #123f3f;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .search-box::placeholder {
+            color: #999;
+        }
+
+        .search-box:focus {
+            border-color: #d9a400;
+
+            box-shadow:
+                0 0 0 3px rgba(217, 164, 0, 0.13);
+        }
+
+        .search-icon {
+            position: absolute;
+
+            left: 17px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 20px;
+
+            pointer-events: none;
+        }
+
+        .clear-search {
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: #f1f0e9;
+
+            color: #555;
+
+            width: 34px;
+
+            height: 34px;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+        .clear-search:hover {
+            background: #e3e0d6;
+
+            color: #0f4c4c;
+        }
+
+        .show-clear {
+            display: flex;
+        }
+
+        /* =========================================================
+           SECTION TITLE
+        ========================================================= */
+
+        .section-title {
+            text-align: center;
+
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 30px;
+
+            color: #0f4c4c;
+
+            margin-bottom: 7px;
+        }
+
+        .section-title p {
+            color: #777;
+
+            font-size: 15px;
+        }
+
+        /* =========================================================
+           PRODUCT GRID
+        ========================================================= */
+
+        .product-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fill,
+                    minmax(265px, 1fr)
+                );
+
+            gap: 25px;
+        }
+
+        .hide-product-grid {
+            display: none;
+        }
+
+        /* =========================================================
+           PRODUCT CARD
+        ========================================================= */
+
+        .product-card {
+            background: white;
+
+            border-radius: 14px;
+
+            overflow: hidden;
+
+            border: 1px solid #ebe8df;
+
+            box-shadow:
+                0 5px 18px rgba(15, 76, 76, 0.09);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+
+            border-color: rgba(217, 164, 0, 0.45);
+
+            box-shadow:
+                0 12px 30px rgba(15, 76, 76, 0.16);
+        }
+
+        .hidden-product {
+            display: none;
+        }
+
+        /* =========================================================
+           PRODUCT IMAGE
+        ========================================================= */
+
+        .product-image {
+            width: 100%;
+
+            height: 245px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f4f2eb,
+                    #eeece4
+                );
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            overflow: hidden;
+
+            position: relative;
+        }
+
+        .product-image::after {
+            content: "Zenvora";
+
+            position: absolute;
+
+            right: 12px;
+
+            bottom: 9px;
+
+            color: rgba(15, 76, 76, 0.12);
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+            letter-spacing: 0.5px;
+        }
+
+        .product-image img {
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: contain;
+
+            padding: 16px;
+
+            transition:
+                transform 0.3s ease;
+        }
+
+        .product-card:hover
+        .product-image img {
+            transform: scale(1.05);
+        }
+
+        .no-image {
+            width: 100%;
+
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 65px;
+
+            color: #999;
+        }
+
+        /* =========================================================
+           PRODUCT INFORMATION
+        ========================================================= */
+
+        .product-info {
+            padding: 21px;
+        }
+
+        .product-name {
+            color: #0f4c4c;
+
+            font-size: 20px;
+
+            line-height: 1.35;
+
+            margin-bottom: 9px;
+
+            min-height: 27px;
+        }
+
+        .price {
+            color: #d9a400;
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            margin-bottom: 17px;
+        }
+
+        .price-symbol {
+            font-size: 20px;
+        }
+
+        /* =========================================================
+           PRODUCT DETAILS
+        ========================================================= */
+
+        .product-details {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 10px;
+
+            margin-bottom: 17px;
+        }
+
+        .detail {
+            background: #f7f5ef;
+
+            border-radius: 8px;
+
+            padding: 10px;
+
+            text-align: center;
+
+            border: 1px solid #ece9df;
+        }
+
+        .detail-label {
+            display: block;
+
+            color: #777;
+
+            font-size: 10px;
+
+            font-weight: bold;
+
+            margin-bottom: 5px;
+
+            letter-spacing: 0.4px;
+        }
+
+        .detail-value {
+            color: #0f4c4c;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+        /* =========================================================
+           STOCK STATUS
+        ========================================================= */
+
+        .stock-status {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            margin-bottom: 14px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+        }
+
+        .stock-dot {
+            width: 8px;
+
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #258a58;
+        }
+
+        .stock-text {
+            color: #258a58;
+        }
+
+        /* =========================================================
+           ADD TO CART
+        ========================================================= */
+
+        .cart-form {
+            width: 100%;
+        }
+
+        .cart-btn {
+            width: 100%;
+
+            border: none;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            padding: 13px;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .cart-btn:hover {
+            background: #0b3838;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 5px 12px rgba(15, 76, 76, 0.20);
+        }
+
+        .cart-btn:active {
+            transform: translateY(0);
+        }
+
+        .cart-btn:focus-visible {
+            outline: 3px solid rgba(217, 164, 0, 0.4);
+
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           OUT OF STOCK
+        ========================================================= */
+
+        .out-stock {
+            width: 100%;
+
+            background: #eeeeee;
+
+            color: #777;
+
+            text-align: center;
+
+            padding: 13px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            border: 1px solid #e0e0e0;
+        }
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================= */
+
+        .empty {
+            background: white;
+
+            text-align: center;
+
+            padding: 65px 30px;
+
+            border-radius: 14px;
+
+            border: 1px solid #ebe8df;
+
+            box-shadow:
+                0 5px 18px rgba(15, 76, 76, 0.09);
+        }
+
+        .empty-icon {
+            font-size: 65px;
+
+            margin-bottom: 15px;
+        }
+
+        .empty h2 {
+            color: #0f4c4c;
+
+            margin-bottom: 9px;
+
+            font-size: 25px;
+        }
+
+        .empty p {
+            color: #777;
+
+            margin-bottom: 20px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           SEARCH EMPTY STATE
+        ========================================================= */
+
+        .search-empty {
+            display: none;
+        }
+
+        .show-search-empty {
+            display: block;
+        }
+
+        .reset-btn {
+            display: inline-block;
+
+            background: #d9a400;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px 18px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .reset-btn:hover {
+            background: #b88900;
+
+            transform: translateY(-1px);
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+            margin-top: 55px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 34px 20px;
+        }
+
+        footer p {
+            margin: 7px;
+
+            font-size: 14px;
+        }
+
+        footer strong {
+            color: #d9a400;
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 800px) {
+
+            .navbar {
+                padding: 13px 18px;
+
+                gap: 12px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .nav-btn {
+                padding: 9px 12px;
+
+                font-size: 13px;
+            }
+
+            .hero {
+                padding: 45px 18px 50px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .products-section {
+                padding: 32px 16px 15px;
+            }
+
+            .product-grid {
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    );
+
+                gap: 18px;
+            }
+
+            .product-image {
+                height: 215px;
+            }
+
+        }
+
+        @media (max-width: 560px) {
+
+            .navbar {
+                flex-direction: column;
+
+                align-items: center;
+
+                justify-content: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+
+                width: 100%;
+            }
+
+            .nav-btn {
+                flex: 1;
+
+                text-align: center;
+
+                min-width: 85px;
+            }
+
+            .hero {
+                padding: 38px 15px 42px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .search-panel {
+                padding: 17px;
+
+                margin-bottom: 28px;
+            }
+
+            .search-top {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 5px;
+            }
+
+            .search-box {
+                font-size: 14px;
+
+                padding-top: 14px;
+
+                padding-bottom: 14px;
+            }
+
+            .section-title h2 {
+                font-size: 25px;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+
+                gap: 20px;
+            }
+
+            .product-image {
+                height: 235px;
+            }
+
+            .product-info {
+                padding: 18px;
+            }
+
+            .product-name {
+                font-size: 19px;
+            }
+
+            .price {
+                font-size: 23px;
+            }
+
+            footer {
+                padding: 28px 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar"
+     aria-label="Main navigation">
+
+
+    <div class="logo">
+
+        🛒 Zen<span>vora</span>
+
+    </div>
+
+
+    <div class="nav-links">
+
+
+        <a
+            href="/cart"
+            class="nav-btn"
+            title="View your shopping cart">
+
+            🛒 Cart
+
+        </a>
+
+
+        <a
+            href="/orders"
+            class="nav-btn"
+            title="View your orders">
+
+            📦 Orders
+
+        </a>
+
+
+        <a
+            href="/logout"
+            class="nav-btn logout-btn"
+            title="Logout from Zenvora">
+
+            Logout
+
+        </a>
+
+
+    </div>
+
+
+</nav>
+
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section class="hero">
+
+
+    <div class="hero-content">
+
+
+        <h1>
+
+            Discover Products at
+
+            <span>Zenvora</span>
+
+        </h1>
+
+
+        <p>
+
+            Find what you need. Add to cart. Shop with ease.
+
+        </p>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================================================
+     PRODUCTS
+========================================================= -->
+
+<section class="products-section">
+
+
+    <!-- =====================================================
+         SEARCH PANEL
+    ====================================================== -->
+
+    <div class="search-panel">
+
+
+        <div class="search-top">
+
+
+            <div class="search-heading">
+
+                🔎 Find Your Product
+
+            </div>
+
+
+            <div
+                class="product-count"
+                id="productCount">
+
+                Showing products
+
+            </div>
+
+
+        </div>
+
+
+        <div class="search-container">
+
+
+            <label
+                for="searchInput"
+                class="visually-hidden">
+
+                Search products by name, product ID, price or stock
+
+            </label>
+
+
+            <span
+                class="search-icon"
+                aria-hidden="true">
+
+                🔍
+
+            </span>
+
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search-box"
+                placeholder="Search by product name, ID, price or stock..."
+                autocomplete="off"
+                aria-label="Search products">
+
+
+            <button
+                type="button"
+                id="clearSearch"
+                class="clear-search"
+                aria-label="Clear product search"
+                title="Clear search">
+
+                ✕
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SECTION TITLE
+    ====================================================== -->
+
+    <div class="section-title">
+
+
+        <h2>
+
+            🛍️ Our Products
+
+        </h2>
+
+
+        <p>
+
+            Choose from our available products
+
+        </p>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PRODUCT GRID
+    ====================================================== -->
+
+    <div
+        class="product-grid"
+        id="productGrid"
+        th:if="${products != null && !#lists.isEmpty(products)}">
+
+
+        <!-- =================================================
+             PRODUCT CARD
+        ================================================== -->
+
+        <div
+            class="product-card"
+            th:each="product : ${products}">
+
+
+            <!-- PRODUCT IMAGE -->
+
+            <div class="product-image">
+
+
+                <img
+                    src="/images/products/default-product.png"
+                    alt="Product image"
+                    title="Product image"
+                    th:if="${product.imageName != null && !product.imageName.isEmpty()}"
+                    th:src="@{'/images/products/' + ${product.imageName}}"
+                    th:alt="${product.productName}"
+                    th:title="${product.productName}">
+
+
+                <div
+                    class="no-image"
+                    th:unless="${product.imageName != null && !product.imageName.isEmpty()}"
+                    role="img"
+                    aria-label="No product image"
+                    title="No product image">
+
+                    📦
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- PRODUCT INFORMATION -->
+
+            <div class="product-info">
+
+
+                <!-- PRODUCT NAME -->
+
+                <h3
+                    class="product-name"
+                    th:text="${product.productName}">
+
+                    Product Name
+
+                </h3>
+
+
+
+                <!-- PRICE -->
+
+                <div class="price">
+
+
+                    <span
+                        class="price-symbol"
+                        aria-hidden="true">
+
+                        ₹
+
+                    </span>
+
+
+                    <span
+                        th:text="${product.price}">
+
+                        0
+
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- PRODUCT DETAILS -->
+
+                <div class="product-details">
+
+
+                    <!-- PRODUCT ID -->
+
+                    <div class="detail">
+
+
+                        <span class="detail-label">
+
+                            PRODUCT ID
+
+                        </span>
+
+
+                        <span
+                            class="detail-value product-id-value"
+                            th:text="${product.productId}">
+
+                            1
+
+                        </span>
+
+
+                    </div>
+
+
+
+                    <!-- STOCK -->
+
+                    <div class="detail">
+
+
+                        <span class="detail-label">
+
+                            STOCK
+
+                        </span>
+
+
+                        <span
+                            class="detail-value stock-value"
+                            th:text="${product.quantity}">
+
+                            0
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- STOCK STATUS -->
+
+                <div
+                    class="stock-status"
+                    th:if="${product.quantity > 0}">
+
+
+                    <span
+                        class="stock-dot"
+                        aria-hidden="true">
+
+                    </span>
+
+
+                    <span class="stock-text">
+
+                        Available
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- ADD TO CART -->
+
+                <form
+                    class="cart-form"
+                    action="/cart/add"
+                    method="post">
+
+
+                    <input
+                        type="hidden"
+                        name="productId"
+                        th:value="${product.productId}">
+
+
+                    <button
+                        type="submit"
+                        class="cart-btn"
+                        th:if="${product.quantity > 0}"
+                        th:attr="aria-label='Add ' + ${product.productName} + ' to cart'"
+                        title="Add product to cart">
+
+                        🛒 Add to Cart
+
+                    </button>
+
+
+                    <div
+                        class="out-stock"
+                        th:unless="${product.quantity > 0}"
+                        role="status">
+
+                        Out of Stock
+
+                    </div>
+
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NO SEARCH RESULTS
+    ====================================================== -->
+
+    <div
+        id="noSearchResults"
+        class="empty search-empty"
+        role="status"
+        aria-live="polite">
+
+
+        <div class="empty-icon">
+
+            🔍
+
+        </div>
+
+
+        <h2>
+
+            No Products Found
+
+        </h2>
+
+
+        <p>
+
+            We couldn't find a product matching your search.
+
+        </p>
+
+
+        <button
+            type="button"
+            id="resetSearch"
+            class="reset-btn">
+
+            Clear Search
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NO DATABASE PRODUCTS
+    ====================================================== -->
+
+    <div
+        class="empty"
+        th:if="${products == null || #lists.isEmpty(products)}">
+
+
+        <div class="empty-icon">
+
+            🛍️
+
+        </div>
+
+
+        <h2>
+
+            No Products Available
+
+        </h2>
+
+
+        <p>
+
+            Please check back later for new products.
+
+        </p>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+
+    <p>
+
+        © 2026 Zenvora — E-Commerce Management System
+
+    </p>
+
+
+    <p>
+
+        Created by
+
+        <strong>
+
+            Ms. Mounika Bolla
+
+        </strong>
+
+    </p>
+
+
+</footer>
+
+
+
+<!-- =========================================================
+     SEARCH JAVASCRIPT
+========================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+
+            const searchInput =
+                document.getElementById("searchInput");
+
+
+            const productGrid =
+                document.getElementById("productGrid");
+
+
+            const noSearchResults =
+                document.getElementById("noSearchResults");
+
+
+            const clearSearch =
+                document.getElementById("clearSearch");
+
+
+            const resetSearch =
+                document.getElementById("resetSearch");
+
+
+            const productCount =
+                document.getElementById("productCount");
+
+
+            if (
+                !searchInput ||
+                !productGrid ||
+                !noSearchResults
+            ) {
+
+                return;
+
+            }
+
+
+            const cards =
+                productGrid.querySelectorAll(
+                    ".product-card"
+                );
+
+
+            const totalProducts =
+                cards.length;
+
+
+            function updateProductCount(
+                visibleCount,
+                searching
+            ) {
+
+
+                if (!productCount) {
+
+                    return;
+
+                }
+
+
+                if (!searching) {
+
+                    productCount.textContent =
+                        "Showing " +
+                        totalProducts +
+                        " product" +
+                        (
+                            totalProducts === 1
+                                ? ""
+                                : "s"
+                        );
+
+                    return;
+
+                }
+
+
+                productCount.textContent =
+                    "Showing " +
+                    visibleCount +
+                    " of " +
+                    totalProducts +
+                    " product" +
+                    (
+                        totalProducts === 1
+                            ? ""
+                            : "s"
+                    );
+
+            }
+
+
+            function performSearch() {
+
+
+                const searchValue =
+                    searchInput.value
+                        .toLowerCase()
+                        .trim();
+
+
+                let visibleCount = 0;
+
+
+                cards.forEach(
+                    function (card) {
+
+
+                        const nameElement =
+                            card.querySelector(
+                                ".product-name"
+                            );
+
+
+                        const productIdElement =
+                            card.querySelector(
+                                ".product-id-value"
+                            );
+
+
+                        const priceElement =
+                            card.querySelector(
+                                ".price"
+                            );
+
+
+                        const stockElement =
+                            card.querySelector(
+                                ".stock-value"
+                            );
+
+
+                        const productName =
+                            nameElement
+                                ? nameElement
+                                    .textContent
+                                    .toLowerCase()
+                                    .trim()
+                                : "";
+
+
+                        const productId =
+                            productIdElement
+                                ? productIdElement
+                                    .textContent
+                                    .toLowerCase()
+                                    .trim()
+                                : "";
+
+
+                        const price =
+                            priceElement
+                                ? priceElement
+                                    .textContent
+                                    .toLowerCase()
+                                    .trim()
+                                : "";
+
+
+                        const stock =
+                            stockElement
+                                ? stockElement
+                                    .textContent
+                                    .toLowerCase()
+                                    .trim()
+                                : "";
+
+
+                        const searchableText =
+                            productName +
+                            " " +
+                            productId +
+                            " " +
+                            price +
+                            " " +
+                            stock;
+
+
+                        const isMatch =
+                            searchValue === "" ||
+                            searchableText.includes(
+                                searchValue
+                            );
+
+
+                        if (isMatch) {
+
+                            card.classList.remove(
+                                "hidden-product"
+                            );
+
+                            visibleCount++;
+
+                        } else {
+
+                            card.classList.add(
+                                "hidden-product"
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                const searching =
+                    searchValue !== "";
+
+
+                updateProductCount(
+                    visibleCount,
+                    searching
+                );
+
+
+                if (clearSearch) {
+
+                    if (searching) {
+
+                        clearSearch.classList.add(
+                            "show-clear"
+                        );
+
+                    } else {
+
+                        clearSearch.classList.remove(
+                            "show-clear"
+                        );
+
+                    }
+
+                }
+
+
+                if (
+                    searching &&
+                    visibleCount === 0
+                ) {
+
+                    productGrid.classList.add(
+                        "hide-product-grid"
+                    );
+
+                    noSearchResults.classList.add(
+                        "show-search-empty"
+                    );
+
+                } else {
+
+                    productGrid.classList.remove(
+                        "hide-product-grid"
+                    );
+
+                    noSearchResults.classList.remove(
+                        "show-search-empty"
+                    );
+
+                }
+
+            }
+
+
+            function resetSearchInput() {
+
+
+                searchInput.value = "";
+
+                performSearch();
+
+                searchInput.focus();
+
+            }
+
+
+            searchInput.addEventListener(
+                "input",
+                performSearch
+            );
+
+
+            if (clearSearch) {
+
+                clearSearch.addEventListener(
+                    "click",
+                    resetSearchInput
+                );
+
+            }
+
+
+            if (resetSearch) {
+
+                resetSearch.addEventListener(
+                    "click",
+                    resetSearchInput
+                );
+
+            }
+
+
+            updateProductCount(
+                totalProducts,
+                false
+            );
+
+
+        }
+
+    );
+
+</script>
+
+
+</body>
+
+</html>

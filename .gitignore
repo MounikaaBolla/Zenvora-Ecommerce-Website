@@ -1,0 +1,11 @@
+**/target/
+*.class
+.vscode/
+.idea/
+.settings/
+.project
+.classpath
+.env
+.env.*
+!.env.example
+**/application-local.properties

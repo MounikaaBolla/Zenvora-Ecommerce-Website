@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Zenvora - Users</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f5ef;
+            color: #123f3f;
+        }
+
+        /* ================= ACCESSIBILITY ================= */
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 72px;
+            background: #0f4c4c;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 55px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.12);
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .admin {
+            color: #d9a400;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: white;
+            background: #d9a400;
+
+            padding: 10px 18px;
+            border-radius: 8px;
+
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #b88900;
+        }
+
+        /* ================= MAIN ================= */
+
+        .section {
+            max-width: 1200px;
+            margin: auto;
+            padding: 45px 25px;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .heading h1 {
+            font-size: 34px;
+            color: #0f4c4c;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #777;
+        }
+
+        /* ================= USER TOOLS ================= */
+
+        .user-tools {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+
+            display: flex;
+            gap: 15px;
+            align-items: center;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 5px 18px rgba(15,76,76,0.08);
+        }
+
+        .search-box {
+            flex: 1;
+
+            padding: 12px 15px;
+
+            border: 1px solid #c9d4d4;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            color: #123f3f;
+
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #d9a400;
+
+            box-shadow:
+                0 0 0 2px rgba(217,164,0,0.15);
+        }
+
+        .role-filter {
+            padding: 12px 15px;
+
+            border: 1px solid #c9d4d4;
+
+            border-radius: 8px;
+
+            background: white;
+
+            color: #123f3f;
+
+            font-size: 14px;
+
+            outline: none;
+
+            cursor: pointer;
+        }
+
+        .role-filter:focus {
+            border-color: #d9a400;
+        }
+
+        .user-count {
+            color: #777;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+            background: white;
+
+            border-radius: 14px;
+
+            overflow-x: auto;
+
+            box-shadow:
+                0 5px 18px rgba(15,76,76,0.10);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        thead {
+            background: #0f4c4c;
+            color: white;
+        }
+
+        th {
+            padding: 17px;
+            text-align: left;
+        }
+
+        td {
+            padding: 17px;
+
+            border-bottom:
+                1px solid #eeeeee;
+
+            color: #444;
+        }
+
+        tbody tr:hover {
+            background: #faf9f4;
+        }
+
+        .id {
+            color: #0f4c4c;
+            font-weight: bold;
+        }
+
+        .role {
+            display: inline-block;
+
+            padding: 6px 12px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+        }
+
+        .admin-role {
+            background: #d9a400;
+            color: white;
+        }
+
+        .customer-role {
+            background: #e4f1f1;
+            color: #0f4c4c;
+        }
+
+        /* ================= NO SEARCH RESULTS ================= */
+
+        .no-results {
+            display: none;
+
+            background: white;
+
+            padding: 50px 20px;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 5px 18px rgba(15,76,76,0.10);
+        }
+
+        .no-results-icon {
+            font-size: 50px;
+            margin-bottom: 12px;
+        }
+
+        .no-results h2 {
+            color: #0f4c4c;
+            margin-bottom: 8px;
+        }
+
+        .no-results p {
+            color: #777;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            background: white;
+
+            padding: 60px 20px;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 5px 18px rgba(15,76,76,0.10);
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty h2 {
+            color: #0f4c4c;
+            margin-bottom: 8px;
+        }
+
+        .empty p {
+            color: #777;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            margin-top: 45px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 30px;
+        }
+
+        footer p {
+            margin: 7px;
+        }
+
+        footer strong {
+            color: #d9a400;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 0 18px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .admin {
+                display: none;
+            }
+
+            .section {
+                padding: 30px 15px;
+            }
+
+            .heading h1 {
+                font-size: 28px;
+            }
+
+            .user-tools {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box,
+            .role-filter {
+                width: 100%;
+            }
+
+            .user-count {
+                text-align: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+
+        🛒 Zenvora
+
+        <span class="admin">
+            ADMIN
+        </span>
+
+    </div>
+
+
+    <a
+        href="/admin"
+        class="back-btn">
+
+        ← Dashboard
+
+    </a>
+
+</nav>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<section class="section">
+
+
+    <div class="heading">
+
+        <h1>
+            👥 Registered Users
+        </h1>
+
+        <p>
+            View and search users registered on Zenvora
+        </p>
+
+    </div>
+
+
+
+    <!-- ================= USER TOOLS ================= -->
+
+    <div
+        class="user-tools"
+        th:if="${users != null && !#lists.isEmpty(users)}">
+
+
+        <label
+            for="userSearch"
+            class="visually-hidden">
+
+            Search users
+
+        </label>
+
+
+        <input
+            type="text"
+            id="userSearch"
+            class="search-box"
+            placeholder="Search by name, email, phone or ID..."
+            aria-label="Search users">
+
+
+        <label
+            for="roleFilter"
+            class="visually-hidden">
+
+            Filter users by role
+
+        </label>
+
+
+        <select
+            id="roleFilter"
+            class="role-filter"
+            title="Filter users by role"
+            aria-label="Filter users by role">
+
+            <option value="ALL">
+                All Roles
+            </option>
+
+            <option value="ADMIN">
+                Admin
+            </option>
+
+            <option value="CUSTOMER">
+                Customer
+            </option>
+
+        </select>
+
+
+        <div class="user-count">
+
+            Showing
+
+            <strong
+                id="visibleCount"
+                th:text="${#lists.size(users)}">
+
+                0
+
+            </strong>
+
+            users
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= TABLE ================= -->
+
+    <div
+        class="table-container"
+        id="userTableContainer"
+        th:if="${users != null && !#lists.isEmpty(users)}">
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        User ID
+                    </th>
+
+                    <th>
+                        Full Name
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+
+                    <th>
+                        Phone
+                    </th>
+
+                    <th>
+                        Role
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="userTableBody">
+
+
+                <tr
+                    th:each="user : ${users}"
+                    class="user-row"
+
+                    th:attr="
+                        data-user-id=${user.userId},
+                        data-name=${user.fullName},
+                        data-email=${user.email},
+                        data-phone=${user.phone},
+                        data-role=${user.role != null && user.role.toString().equalsIgnoreCase('ADMIN') ? 'ADMIN' : 'CUSTOMER'}
+                    ">
+
+
+                    <!-- USER ID -->
+
+                    <td>
+
+                        <span
+                            class="id"
+                            th:text="${user.userId}">
+
+                            1
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- NAME -->
+
+                    <td
+                        th:text="${user.fullName}">
+
+                        User Name
+
+                    </td>
+
+
+                    <!-- EMAIL -->
+
+                    <td
+                        th:text="${user.email}">
+
+                        email@example.com
+
+                    </td>
+
+
+                    <!-- PHONE -->
+
+                    <td
+                        th:text="${user.phone != null && user.phone != '' ? user.phone : 'Not available'}">
+
+                        Phone
+
+                    </td>
+
+
+                    <!-- ROLE -->
+
+                    <td>
+
+
+                        <span
+                            class="role admin-role"
+                            th:if="${user.role != null && user.role.toString().equalsIgnoreCase('ADMIN')}">
+
+                            ADMIN
+
+                        </span>
+
+
+                        <span
+                            class="role customer-role"
+                            th:if="${user.role == null || !user.role.toString().equalsIgnoreCase('ADMIN')}">
+
+                            CUSTOMER
+
+                        </span>
+
+
+                    </td>
+
+
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+
+    </div>
+
+
+
+    <!-- ================= NO SEARCH RESULTS ================= -->
+
+    <div
+        id="noResults"
+        class="no-results">
+
+        <div class="no-results-icon">
+            🔍
+        </div>
+
+        <h2>
+            No Matching Users
+        </h2>
+
+        <p>
+            Try a different name, email, phone number or role.
+        </p>
+
+    </div>
+
+
+
+    <!-- ================= EMPTY DATABASE ================= -->
+
+    <div
+        class="empty"
+        th:if="${users == null || #lists.isEmpty(users)}">
+
+        <div class="empty-icon">
+            👥
+        </div>
+
+        <h2>
+            No Users Found
+        </h2>
+
+        <p>
+            There are currently no registered users.
+        </p>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <p>
+        © 2026 Zenvora — E-Commerce Management System
+    </p>
+
+    <p>
+
+        Created by
+
+        <strong>
+            Ms. Mounika Bolla
+        </strong>
+
+    </p>
+
+</footer>
+
+
+
+<!-- ================= SEARCH SCRIPT ================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput =
+        document.getElementById("userSearch");
+
+    const roleFilter =
+        document.getElementById("roleFilter");
+
+    const tableContainer =
+        document.getElementById("userTableContainer");
+
+    const noResults =
+        document.getElementById("noResults");
+
+    const visibleCount =
+        document.getElementById("visibleCount");
+
+    const rows =
+        document.querySelectorAll(".user-row");
+
+
+    if (!searchInput ||
+        !roleFilter ||
+        !tableContainer ||
+        !noResults) {
+
+        return;
+    }
+
+
+    function filterUsers() {
+
+        const searchValue =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
+        const selectedRole =
+            roleFilter.value;
+
+        let count = 0;
+
+
+        rows.forEach(function (row) {
+
+            const userId =
+                (row.dataset.userId || "")
+                    .toLowerCase();
+
+            const name =
+                (row.dataset.name || "")
+                    .toLowerCase();
+
+            const email =
+                (row.dataset.email || "")
+                    .toLowerCase();
+
+            const phone =
+                (row.dataset.phone || "")
+                    .toLowerCase();
+
+            const role =
+                (row.dataset.role || "")
+                    .toUpperCase();
+
+
+            const matchesSearch =
+                searchValue === "" ||
+                userId.includes(searchValue) ||
+                name.includes(searchValue) ||
+                email.includes(searchValue) ||
+                phone.includes(searchValue);
+
+
+            const matchesRole =
+                selectedRole === "ALL" ||
+                role === selectedRole;
+
+
+            if (matchesSearch && matchesRole) {
+
+                row.style.display = "";
+
+                count++;
+
+            } else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+
+        if (visibleCount) {
+
+            visibleCount.textContent = count;
+
+        }
+
+
+        if (count === 0) {
+
+            tableContainer.style.display = "none";
+
+            noResults.style.display = "block";
+
+        } else {
+
+            tableContainer.style.display = "block";
+
+            noResults.style.display = "none";
+
+        }
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterUsers
+    );
+
+
+    roleFilter.addEventListener(
+        "change",
+        filterUsers
+    );
+
+});
+
+</script>
+
+
+</body>
+
+</html>

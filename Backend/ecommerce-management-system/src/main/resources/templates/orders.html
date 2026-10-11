@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Zenvora - My Orders</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f5ef;
+            color: #123f3f;
+            min-height: 100vh;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            min-height: 70px;
+            background: #0f4c4c;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 70px;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #d9a400;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .shop-btn {
+            text-decoration: none;
+            background: #d9a400;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .shop-btn:hover {
+            background: #b88900;
+        }
+
+        /* ================= ORDERS ================= */
+
+        .orders-section {
+            padding: 50px 30px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 34px;
+            color: #0f4c4c;
+            margin-bottom: 35px;
+        }
+
+        .orders-container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* ================= ORDER CARD ================= */
+
+        .order-card {
+            background: white;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            padding: 25px;
+            box-shadow: 0 5px 18px rgba(15, 76, 76, 0.10);
+            border: 1px solid #ece9df;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .order-id {
+            font-size: 19px;
+            font-weight: bold;
+            color: #0f4c4c;
+        }
+
+        .order-date {
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* ================= ORDER ITEMS ================= */
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eeeeee;
+            gap: 20px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 17px;
+            font-weight: bold;
+            color: #123f3f;
+            margin-bottom: 6px;
+        }
+
+        .product-details {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .item-price {
+            font-size: 17px;
+            font-weight: bold;
+            color: #c18b00;
+            white-space: nowrap;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status-section {
+            margin-top: 18px;
+        }
+
+        .status-label {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .status-placed {
+            background: #fff4d6;
+            color: #9a6a00;
+        }
+
+        .status-confirmed {
+            background: #e8f1ff;
+            color: #245c9c;
+        }
+
+        .status-shipped {
+            background: #eee8ff;
+            color: #6541a5;
+        }
+
+        .status-delivered {
+            background: #e9f5ee;
+            color: #167a45;
+        }
+
+        .status-cancelled {
+            background: #fdeaea;
+            color: #b83232;
+        }
+
+        /* ================= TOTAL ================= */
+
+        .order-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .total-label {
+            font-size: 17px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .total-price {
+            font-size: 23px;
+            font-weight: bold;
+            color: #d9a400;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty-orders {
+            background: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 50px 30px;
+            text-align: center;
+            border-radius: 14px;
+            box-shadow: 0 5px 18px rgba(15, 76, 76, 0.10);
+            border: 1px solid #ece9df;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-orders h2 {
+            color: #0f4c4c;
+            margin-bottom: 12px;
+        }
+
+        .empty-orders p {
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .empty-btn {
+            display: inline-block;
+            text-decoration: none;
+            background: #0f4c4c;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .empty-btn:hover {
+            background: #083737;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            margin-top: 40px;
+            background: #0f4c4c;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        footer p {
+            margin: 7px;
+        }
+
+        footer strong {
+            color: #d9a400;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .logo {
+                font-size: 23px;
+                text-align: center;
+            }
+
+            .nav-actions {
+                justify-content: center;
+            }
+
+            .shop-btn {
+                text-align: center;
+                width: 100%;
+            }
+
+            .orders-section {
+                padding: 35px 15px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .order-card {
+                padding: 18px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .order-item {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .item-price {
+                font-size: 15px;
+            }
+
+            .order-footer {
+                justify-content: space-between;
+            }
+
+            .total-price {
+                font-size: 20px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🛒 Zenvora
+    </div>
+
+    <div class="nav-actions">
+
+        <a href="/products"
+           class="shop-btn">
+            🛍️ Continue Shopping
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- ================= ORDERS ================= -->
+
+<section class="orders-section">
+
+    <h1 class="title">
+        📦 My Orders
+    </h1>
+
+
+    <div class="orders-container">
+
+        <!-- ================= ORDERS LOOP ================= -->
+
+        <div class="order-card"
+             th:each="order, orderStat : ${orders}">
+
+            <!-- ORDER HEADER -->
+
+            <div class="order-header">
+
+                <div class="order-id">
+
+                    Order #
+
+                    <span th:text="${order.orderId}">
+                        1
+                    </span>
+
+                </div>
+
+                <div class="order-date"
+                     th:text="${order.orderDate}">
+                    Order Date
+                </div>
+
+            </div>
+
+
+            <!-- ================= ORDER ITEMS ================= -->
+
+            <div class="order-item"
+                 th:each="item, itemStat : ${allOrderItems[orderStat.index]}">
+
+                <div class="product-info">
+
+                    <div class="product-name">
+
+                        <span th:text="${allProducts[orderStat.index][itemStat.index].productName}">
+                            Product Name
+                        </span>
+
+                    </div>
+
+                    <div class="product-details">
+
+                        Quantity:
+
+                        <span th:text="${item.quantity}">
+                            1
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="item-price">
+
+                    ₹<span th:text="${item.price * item.quantity}">
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= ORDER STATUS ================= -->
+
+            <div class="status-section">
+
+                <div class="status-label">
+                    Order Status
+                </div>
+
+                <!-- PLACED -->
+
+                <span class="status status-placed"
+                      th:if="${order.status == 'PLACED'}">
+                    ✓ Order Placed
+                </span>
+
+                <!-- CONFIRMED -->
+
+                <span class="status status-confirmed"
+                      th:if="${order.status == 'CONFIRMED'}">
+                    ✓ Order Confirmed
+                </span>
+
+                <!-- SHIPPED -->
+
+                <span class="status status-shipped"
+                      th:if="${order.status == 'SHIPPED'}">
+                    🚚 Shipped
+                </span>
+
+                <!-- DELIVERED -->
+
+                <span class="status status-delivered"
+                      th:if="${order.status == 'DELIVERED'}">
+                    ✓ Delivered
+                </span>
+
+                <!-- CANCELLED -->
+
+                <span class="status status-cancelled"
+                      th:if="${order.status == 'CANCELLED'}">
+                    ✕ Cancelled
+                </span>
+
+            </div>
+
+
+            <!-- ================= TOTAL ================= -->
+
+            <div class="order-footer">
+
+                <span class="total-label">
+                    Total:
+                </span>
+
+                <span class="total-price">
+
+                    ₹<span th:text="${order.totalAmount}">
+                        0
+                    </span>
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= EMPTY ORDERS ================= -->
+
+        <div class="empty-orders"
+             th:if="${#lists.isEmpty(orders)}">
+
+            <div class="empty-icon">
+                📦
+            </div>
+
+            <h2>
+                No Orders Yet
+            </h2>
+
+            <p>
+                You haven't placed any orders yet.
+            </p>
+
+            <a href="/products"
+               class="empty-btn">
+                🛍️ Start Shopping
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <p>
+        © 2026 Zenvora — E-Commerce Management System
+    </p>
+
+    <p>
+        Created by
+        <strong>
+            Ms. Mounika Bolla
+        </strong>
+    </p>
+
+</footer>
+
+</body>
+
+</html>

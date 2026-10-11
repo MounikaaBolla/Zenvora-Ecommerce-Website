@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Zenvora - Your Cart</title>
+
+    <style>
+
+        /* =========================================================
+           GLOBAL
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f5ef;
+            color: #123f3f;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================= */
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        .navbar {
+            min-height: 72px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 55px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 3px 14px rgba(0, 0, 0, 0.14);
+        }
+
+        .logo {
+            color: white;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #d9a400;
+        }
+
+        .back-btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: white;
+
+            background: #d9a400;
+
+            padding: 11px 18px;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #b88900;
+
+            transform: translateY(-1px);
+        }
+
+        .back-btn:focus-visible {
+            outline: 3px solid rgba(255, 255, 255, 0.6);
+
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           CART SECTION
+        ========================================================= */
+
+        .cart-section {
+            max-width: 1180px;
+
+            margin: 0 auto;
+
+            padding: 45px 25px 20px;
+        }
+
+        .title {
+            text-align: center;
+
+            color: #0f4c4c;
+
+            font-size: 35px;
+
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #777;
+
+            font-size: 15px;
+
+            margin-bottom: 35px;
+        }
+
+        /* =========================================================
+           CART HEADER
+        ========================================================= */
+
+        .cart-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 18px;
+
+            gap: 15px;
+        }
+
+        .cart-heading {
+            color: #0f4c4c;
+
+            font-size: 20px;
+
+            font-weight: bold;
+        }
+
+        .cart-count {
+            background: #e9e3cf;
+
+            color: #0f4c4c;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+        /* =========================================================
+           CART ITEM
+        ========================================================= */
+
+        .cart-item {
+            background: white;
+
+            padding: 22px;
+
+            margin-bottom: 18px;
+
+            border-radius: 14px;
+
+            border: 1px solid #ebe8df;
+
+            box-shadow:
+                0 5px 18px rgba(15, 76, 76, 0.08);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 24px;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 9px 24px rgba(15, 76, 76, 0.12);
+        }
+
+        /* =========================================================
+           PRODUCT IMAGE
+        ========================================================= */
+
+        .product-image {
+            width: 145px;
+
+            height: 145px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f4f2eb,
+                    #eeece4
+                );
+
+            border-radius: 11px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            overflow: hidden;
+
+            flex-shrink: 0;
+
+            border: 1px solid #ebe8df;
+        }
+
+        .product-image img {
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: contain;
+
+            padding: 10px;
+
+            transition:
+                transform 0.25s ease;
+        }
+
+        .cart-item:hover
+        .product-image img {
+            transform: scale(1.04);
+        }
+
+        .default-icon {
+            font-size: 55px;
+
+            color: #999;
+        }
+
+        /* =========================================================
+           PRODUCT INFORMATION
+        ========================================================= */
+
+        .cart-info {
+            flex: 1;
+
+            min-width: 0;
+        }
+
+        .cart-info h3 {
+            color: #0f4c4c;
+
+            font-size: 21px;
+
+            line-height: 1.35;
+
+            margin-bottom: 9px;
+        }
+
+        .price {
+            color: #d9a400;
+
+            font-size: 19px;
+
+            font-weight: bold;
+
+            margin-bottom: 17px;
+        }
+
+        .price-unit {
+            color: #888;
+
+            font-size: 13px;
+
+            font-weight: normal;
+        }
+
+        /* =========================================================
+           QUANTITY
+        ========================================================= */
+
+        .quantity-label {
+            color: #666;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.4px;
+
+            margin-bottom: 7px;
+        }
+
+        .quantity-controls {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 16px;
+
+            padding: 4px;
+
+            background: #f7f5ef;
+
+            border: 1px solid #e7e3d8;
+
+            border-radius: 9px;
+        }
+
+        .quantity-controls form {
+            margin: 0;
+        }
+
+        .quantity-btn {
+            width: 35px;
+
+            height: 35px;
+
+            border: none;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            border-radius: 7px;
+
+            font-size: 20px;
+
+            line-height: 1;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            transition:
+                background 0.2s ease,
+                transform 0.15s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #0b3838;
+
+            transform: scale(1.04);
+        }
+
+        .quantity-btn:focus-visible {
+            outline: 3px solid rgba(217, 164, 0, 0.4);
+
+            outline-offset: 2px;
+        }
+
+        .quantity {
+            min-width: 32px;
+
+            text-align: center;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            color: #0f4c4c;
+        }
+
+        /* =========================================================
+           ITEM TOTAL
+        ========================================================= */
+
+        .item-total {
+            font-size: 15px;
+
+            font-weight: bold;
+
+            color: #555;
+        }
+
+        .item-total span {
+            color: #d9a400;
+
+            font-size: 19px;
+        }
+
+        /* =========================================================
+           REMOVE
+        ========================================================= */
+
+        .remove-area {
+            flex-shrink: 0;
+        }
+
+        .remove-btn {
+            background: #b83232;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px 17px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            font-size: 13px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background: #922727;
+
+            transform: translateY(-1px);
+        }
+
+        .remove-btn:focus-visible {
+            outline: 3px solid rgba(184, 50, 50, 0.3);
+
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           CART SUMMARY
+        ========================================================= */
+
+        .cart-summary {
+            background: white;
+
+            margin-top: 28px;
+
+            padding: 28px;
+
+            border-radius: 14px;
+
+            border: 1px solid #ebe8df;
+
+            box-shadow:
+                0 5px 18px rgba(15, 76, 76, 0.09);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 30px;
+        }
+
+        .summary-text {
+            flex: 1;
+        }
+
+        .summary-text h2 {
+            color: #0f4c4c;
+
+            font-size: 22px;
+
+            margin-bottom: 7px;
+        }
+
+        .summary-text p {
+            color: #777;
+
+            font-size: 14px;
+
+            margin-bottom: 19px;
+
+            line-height: 1.5;
+        }
+
+        .checkout-btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            padding: 13px 24px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .checkout-btn:hover {
+            background: #0b3838;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 5px 13px rgba(15, 76, 76, 0.2);
+        }
+
+        .checkout-btn:focus-visible {
+            outline: 3px solid rgba(217, 164, 0, 0.45);
+
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           GRAND TOTAL
+        ========================================================= */
+
+        .grand-total-box {
+            min-width: 230px;
+
+            padding: 20px;
+
+            background: #f7f5ef;
+
+            border-radius: 10px;
+
+            border: 1px solid #ebe8df;
+
+            text-align: center;
+        }
+
+        .total-label {
+            display: block;
+
+            color: #777;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            margin-bottom: 7px;
+        }
+
+        .grand-total {
+            color: #0f4c4c;
+
+            font-size: 28px;
+
+            font-weight: bold;
+        }
+
+        .grand-total span {
+            color: #d9a400;
+        }
+
+        /* =========================================================
+           EMPTY CART
+        ========================================================= */
+
+        .empty {
+            background: white;
+
+            padding: 70px 30px;
+
+            border-radius: 14px;
+
+            border: 1px solid #ebe8df;
+
+            text-align: center;
+
+            box-shadow:
+                0 5px 18px rgba(15, 76, 76, 0.09);
+        }
+
+        .empty-icon {
+            font-size: 68px;
+
+            margin-bottom: 18px;
+        }
+
+        .empty h2 {
+            color: #0f4c4c;
+
+            font-size: 26px;
+
+            margin-bottom: 10px;
+        }
+
+        .empty p {
+            color: #777;
+
+            font-size: 15px;
+
+            line-height: 1.5;
+
+            margin-bottom: 23px;
+        }
+
+        .shop-btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 12px 23px;
+
+            background: #d9a400;
+
+            color: white;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .shop-btn:hover {
+            background: #b88900;
+
+            transform: translateY(-1px);
+        }
+
+        .shop-btn:focus-visible {
+            outline: 3px solid rgba(217, 164, 0, 0.35);
+
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+            margin-top: 55px;
+
+            background: #0f4c4c;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 34px 20px;
+        }
+
+        footer p {
+            margin: 7px;
+
+            font-size: 14px;
+        }
+
+        footer strong {
+            color: #d9a400;
+        }
+
+        /* =========================================================
+           TABLET
+        ========================================================= */
+
+        @media (max-width: 850px) {
+
+            .navbar {
+                padding: 0 25px;
+            }
+
+            .cart-section {
+                padding-left: 18px;
+
+                padding-right: 18px;
+            }
+
+            .cart-item {
+                align-items: flex-start;
+
+                flex-wrap: wrap;
+            }
+
+            .cart-info {
+                min-width: calc(100% - 180px);
+            }
+
+            .remove-area {
+                margin-left: auto;
+            }
+
+            .cart-summary {
+                align-items: stretch;
+            }
+
+            .grand-total-box {
+                min-width: 200px;
+            }
+
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                min-height: 68px;
+
+                padding: 12px 15px;
+
+                gap: 12px;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .back-btn {
+                padding: 9px 12px;
+
+                font-size: 12px;
+            }
+
+            .cart-section {
+                padding: 30px 15px 15px;
+            }
+
+            .title {
+                font-size: 29px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+
+                margin-bottom: 27px;
+            }
+
+            .cart-header {
+                margin-bottom: 14px;
+            }
+
+            .cart-heading {
+                font-size: 18px;
+            }
+
+            .cart-count {
+                font-size: 12px;
+            }
+
+            .cart-item {
+                padding: 17px;
+
+                gap: 17px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+            .product-image {
+                width: 100%;
+
+                height: 210px;
+            }
+
+            .cart-info {
+                min-width: 0;
+
+                width: 100%;
+            }
+
+            .cart-info h3 {
+                font-size: 20px;
+            }
+
+            .quantity-controls {
+                margin-bottom: 14px;
+            }
+
+            .remove-area {
+                margin-left: 0;
+
+                width: 100%;
+            }
+
+            .remove-btn {
+                width: 100%;
+
+                padding: 12px;
+            }
+
+            .cart-summary {
+                flex-direction: column;
+
+                align-items: stretch;
+
+                padding: 22px;
+
+                gap: 20px;
+            }
+
+            .grand-total-box {
+                width: 100%;
+
+                min-width: 0;
+            }
+
+            .checkout-btn {
+                width: 100%;
+            }
+
+            .empty {
+                padding: 55px 20px;
+            }
+
+            .empty-icon {
+                font-size: 58px;
+            }
+
+            footer {
+                padding: 28px 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav
+    class="navbar"
+    aria-label="Main navigation">
+
+
+    <div class="logo">
+
+        🛒 Zen<span>vora</span>
+
+    </div>
+
+
+    <a
+        href="/products"
+        class="back-btn"
+        title="Continue shopping">
+
+        ← Continue Shopping
+
+    </a>
+
+
+</nav>
+
+
+
+<!-- =========================================================
+     CART SECTION
+========================================================= -->
+
+<section class="cart-section">
+
+
+    <h1 class="title">
+
+        🛒 Your Cart
+
+    </h1>
+
+
+    <p class="subtitle">
+
+        Review your selected products before checkout.
+
+    </p>
+
+
+
+    <!-- =====================================================
+         CART HAS ITEMS
+    ====================================================== -->
+
+    <div
+        th:if="${cartItems != null and !cartItems.isEmpty()}">
+
+
+        <!-- CART HEADER -->
+
+        <div class="cart-header">
+
+
+            <div class="cart-heading">
+
+                Shopping Cart
+
+            </div>
+
+
+            <div
+                class="cart-count"
+                th:text="${cartItems.size() + ' item' + (cartItems.size() == 1 ? '' : 's')}">
+
+                0 items
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             EACH CART ITEM
+        ================================================== -->
+
+        <div
+            class="cart-item"
+            th:each="item, stat : ${cartItems}">
+
+
+            <!-- =================================================
+                 PRODUCT IMAGE
+            ================================================== -->
+
+            <div class="product-image">
+
+
+                <img
+                    src="/images/products/default-product.png"
+                    alt="Product image"
+                    title="Product image"
+                    th:if="${products[stat.index] != null and products[stat.index].imageName != null and !#strings.isEmpty(products[stat.index].imageName)}"
+                    th:src="@{/images/products/{filename}(filename=${products[stat.index].imageName})}"
+                    th:alt="${products[stat.index].productName}"
+                    th:title="${products[stat.index].productName}">
+
+
+                <span
+                    class="default-icon"
+                    th:if="${products[stat.index] == null or products[stat.index].imageName == null or #strings.isEmpty(products[stat.index].imageName)}"
+                    role="img"
+                    aria-label="No product image"
+                    title="No product image">
+
+                    📦
+
+                </span>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PRODUCT INFORMATION
+            ================================================== -->
+
+            <div class="cart-info">
+
+
+                <!-- PRODUCT NAME -->
+
+                <h3
+                    th:text="${products[stat.index].productName}">
+
+                    Product Name
+
+                </h3>
+
+
+
+                <!-- PRODUCT PRICE -->
+
+                <div class="price">
+
+
+                    ₹<span
+                        th:text="${products[stat.index].price}">
+
+                        0
+
+                    </span>
+
+
+                    <span class="price-unit">
+
+                        per item
+
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- QUANTITY -->
+
+                <div class="quantity-label">
+
+                    Quantity
+
+                </div>
+
+
+
+                <div class="quantity-controls">
+
+
+                    <!-- DECREASE -->
+
+                    <form
+                        action="/cart/decrease"
+                        method="post">
+
+
+                        <input
+                            type="hidden"
+                            name="cartId"
+                            th:value="${item.cartId}">
+
+
+                        <button
+                            type="submit"
+                            class="quantity-btn"
+                            aria-label="Decrease quantity"
+                            title="Decrease quantity">
+
+                            −
+
+                        </button>
+
+
+                    </form>
+
+
+
+                    <!-- CURRENT QUANTITY -->
+
+                    <span
+                        class="quantity"
+                        th:text="${item.quantity}"
+                        aria-label="Current quantity">
+
+                        0
+
+                    </span>
+
+
+
+                    <!-- INCREASE -->
+
+                    <form
+                        action="/cart/increase"
+                        method="post">
+
+
+                        <input
+                            type="hidden"
+                            name="cartId"
+                            th:value="${item.cartId}">
+
+
+                        <button
+                            type="submit"
+                            class="quantity-btn"
+                            aria-label="Increase quantity"
+                            title="Increase quantity">
+
+                            +
+
+                        </button>
+
+
+                    </form>
+
+
+                </div>
+
+
+
+                <!-- ITEM TOTAL -->
+
+                <div class="item-total">
+
+
+                    Item Total:
+
+
+                    ₹<span
+                        th:text="${products[stat.index].price * item.quantity}">
+
+                        0
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 REMOVE
+            ================================================== -->
+
+            <div class="remove-area">
+
+
+                <form
+                    action="/cart/remove"
+                    method="post">
+
+
+                    <input
+                        type="hidden"
+                        name="cartId"
+                        th:value="${item.cartId}">
+
+
+                    <button
+                        type="submit"
+                        class="remove-btn"
+                        title="Remove this item from your cart"
+                        aria-label="Remove this item from your cart">
+
+                        🗑 Remove
+
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             CART SUMMARY
+        ================================================== -->
+
+        <div class="cart-summary">
+
+
+            <div class="summary-text">
+
+
+                <h2>
+
+                    Order Summary
+
+                </h2>
+
+
+                <p>
+
+                    Your items are ready. Continue to checkout
+                    to place your order.
+
+                </p>
+
+
+                <a
+                    href="/checkout"
+                    class="checkout-btn"
+                    title="Proceed to checkout">
+
+                    Proceed to Checkout →
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- GRAND TOTAL -->
+
+            <div class="grand-total-box">
+
+
+                <span class="total-label">
+
+                    Grand Total
+
+                </span>
+
+
+                <div class="grand-total">
+
+
+                    ₹<span
+                        th:text="${grandTotal}">
+
+                        0
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         EMPTY CART
+    ====================================================== -->
+
+    <div
+        class="empty"
+        th:if="${cartItems == null or cartItems.isEmpty()}">
+
+
+        <div class="empty-icon">
+
+            🛒
+
+        </div>
+
+
+        <h2>
+
+            Your Cart is Empty
+
+        </h2>
+
+
+        <p>
+
+            You haven't added any products to your cart yet.
+            Explore our products and start shopping.
+
+        </p>
+
+
+        <a
+            href="/products"
+            class="shop-btn"
+            title="Browse products">
+
+            🛍️ Start Shopping
+
+        </a>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+
+    <p>
+
+        © 2026 Zenvora — E-Commerce Management System
+
+    </p>
+
+
+    <p>
+
+        Created by
+
+        <strong>
+
+            Ms. Mounika Bolla
+
+        </strong>
+
+    </p>
+
+
+</footer>
+
+
+</body>
+
+</html>
